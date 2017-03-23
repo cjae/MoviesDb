@@ -34,9 +34,9 @@ public class GetMovieDetailUseCaseController implements GetMovieDetailUseCase {
 
     public GetMovieDetailUseCaseController(String movieId, Bus uiBus,
                                            MediaDataSource dataSource) {
-        mMovieId        = movieId;
-        mUiBus          = uiBus;
-        mMovieDataSource= dataSource;
+        this.mMovieId = movieId;
+        this.mUiBus = uiBus;
+        this.mMovieDataSource = dataSource;
 
         mUiBus.register(this);
     }

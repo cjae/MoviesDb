@@ -18,6 +18,8 @@ import com.esod.cjae.entities.MoviesWrapper;
 import com.esod.cjae.rest.RestDataSource;
 import com.squareup.otto.Bus;
 
+import javax.inject.Inject;
+
 /**
  * This class is an implementation of {@link GetMoviesUseCase}
  */
@@ -33,7 +35,7 @@ public class GetMoviesUseCaseController implements GetMoviesUseCase {
      * @param uiBus The bus to communicate the domain module and the app module
      * @param dataSource The data source to retrieve the list of movies
      */
-    //@Inject
+    @Inject
     public GetMoviesUseCaseController(RestDataSource dataSource, Bus uiBus) {
         mDataSource = dataSource;
         mUiBus = uiBus;

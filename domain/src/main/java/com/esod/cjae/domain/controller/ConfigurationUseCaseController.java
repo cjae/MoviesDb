@@ -20,6 +20,8 @@ import com.esod.cjae.entities.ConfigurationResponse;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
+import javax.inject.Inject;
+
 @SuppressWarnings("FieldCanBeLocal")
 public class ConfigurationUseCaseController implements ConfigurationUseCase {
 
@@ -29,7 +31,7 @@ public class ConfigurationUseCaseController implements ConfigurationUseCase {
     private final MediaDataSource mMediaDataSource;
     private final Bus mMainBus;
 
-    //@Inject
+    @Inject
     public ConfigurationUseCaseController(MediaDataSource mediaDataSource, Bus mainBus) {
 
         mMediaDataSource    = mediaDataSource;
@@ -53,7 +55,6 @@ public class ConfigurationUseCaseController implements ConfigurationUseCase {
     @Subscribe
     @Override
     public void onConfigurationReceived(ConfigurationResponse configuration) {
-
         mMainBus.unregister(this);
         configureImageUrl(configuration);
     }

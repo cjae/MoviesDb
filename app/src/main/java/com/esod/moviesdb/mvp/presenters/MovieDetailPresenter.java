@@ -1,0 +1,147 @@
+/*
+ * Copyright (C) 2015 Saúl Molinero.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.esod.moviesdb.mvp.presenters;
+
+
+import android.os.Handler;
+import android.text.TextUtils;
+import android.util.Log;
+
+import com.esod.cjae.domain.usecase.GetMovieDetailUseCase;
+import com.esod.cjae.entities.ImagesWrapper;
+import com.esod.cjae.entities.MovieDetail;
+import com.esod.cjae.entities.Production_companies;
+import com.esod.cjae.entities.ReviewsWrapper;
+import com.esod.cjae.util.Constants;
+import com.esod.moviesdb.mvp.views.DetailView;
+import com.esod.moviesdb.views.activities.MoviesActivity;
+import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
+
+import java.util.List;
+import java.util.Random;
+
+import javax.inject.Inject;
+
+public class MovieDetailPresenter extends Presenter {
+
+    private final Bus mBus;
+    private DetailView mMovieDetailView;
+    private final GetMovieDetailUseCase mMovieDetailUsecase;
+
+    @Inject
+    public MovieDetailPresenter(GetMovieDetailUseCase movieDetailUsecase, Bus bus) {
+
+        mMovieDetailUsecase = movieDetailUsecase;
+        mBus = bus;
+    }
+
+    public void attachView (DetailView movieDetailView) {
+
+        mMovieDetailView = movieDetailView;
+        mMovieDetailView.showFilmCover(MoviesActivity.sPhotoCache.get(0));
+        mMovieDetailUsecase.execute();
+    }
+
+    public void showDescription(String description) {
+
+        mMovieDetailView.setDescription(description);
+    }
+
+    @Override
+    public void start() {
+
+        mBus.register(this);
+    }
+
+    @Override
+    public void stop() {
+
+        mBus.unregister(this);
+    }
+
+    public void showTagline(String tagLine) {
+
+        mMovieDetailView.setTagline(tagLine);
+    }
+
+    public void showTitle(String title) {
+
+        mMovieDetailView.setName(title);
+    }
+
+    public void showCompanies(List<Production_companies> companies) {
+
+        String companiesString = "";
+
+        for (int i = 0; i < companies.size(); i++) {
+
+            Production_companies company = companies.get(i);
+            companiesString += company.getName();
+
+            if (i != companies.size() -1)
+                companiesString += ", ";
+        }
+
+        if (!companies.isEmpty())
+            mMovieDetailView.setCompanies(companiesString);
+    }
+
+    @Subscribe
+    public void onDetailInformationReceived(MovieDetail response) {
+
+        showDescription(response.getOverview());
+        showTitle(response.getTitle());
+        showTagline(response.getTagline());
+        showCompanies(response.getProduction_companies());
+        showHomepage(response.getHomepage());
+        showFilmImage(response.getMovieImagesList());
+    }
+
+    private void showFilmImage(List<ImagesWrapper.MovieImage> movieImagesList) {
+
+        if (movieImagesList != null && movieImagesList.size() > 0) {
+
+            int randomIndex = new Random().nextInt(movieImagesList.size());
+            Log.d("[DEBUG]", "MovieDetailPresenter showFilmImage - Random index: "+randomIndex);
+
+            mMovieDetailView.showMovieImage (Constants.BASIC_STATIC_URL +
+                movieImagesList.get(randomIndex).getFile_path());
+        }
+    }
+
+    @Subscribe
+    public void onReviewsReceived (final ReviewsWrapper reviewsWrapper) {
+
+        // Wait 300 milliseconds to ensure that Palette generates the colors
+        // before show the reviews
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                if (reviewsWrapper.getResults().size() > 0)
+                    mMovieDetailView.showReviews(reviewsWrapper.getResults());
+            }
+        }, 300);
+
+    }
+
+    public void showHomepage(String homepage) {
+
+        if (!TextUtils.isEmpty(homepage))
+            mMovieDetailView.setHomepage(homepage);
+    }
+}
