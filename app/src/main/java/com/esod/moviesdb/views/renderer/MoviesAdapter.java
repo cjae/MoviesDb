@@ -13,6 +13,7 @@
  */
 package com.esod.moviesdb.views.renderer;
 
+
 import android.content.Context;
 import android.os.Build;
 import android.support.v7.widget.RecyclerView;
@@ -22,16 +23,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.Picasso;
 
 import com.esod.cjae.entities.Movie;
 import com.esod.cjae.util.Constants;
 import com.esod.moviesdb.R;
 import com.esod.moviesdb.utils.RecyclerViewClickListener;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
-
 
 public class MoviesAdapter extends RecyclerView.Adapter<MovieViewHolder> {
 
@@ -74,23 +75,39 @@ public class MoviesAdapter extends RecyclerView.Adapter<MovieViewHolder> {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             holder.coverImageView.setTransitionName("cover" + position);
 
-        String posterURL = Constants.BASIC_STATIC_URL + selectedMovie.getPoster_path();
-
+        final String posterURL = Constants.BASIC_STATIC_URL + selectedMovie.getPoster_path();
+        
         Picasso.with(mContext)
-            .load(posterURL)
-            .fit().centerCrop()
-            .into(holder.coverImageView, new Callback() {
-                @Override
-                public void onSuccess() {
+                .load(posterURL)
+                .fit()
+                .centerCrop()
+                .networkPolicy(NetworkPolicy.OFFLINE)
+                .into(holder.coverImageView, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        mMovieList.get(position).setMovieReady(true);
+                    }
 
-                    mMovieList.get(position).setMovieReady(true);
-                }
+                    @Override
+                    public void onError() {
+                        //Try again online if cache failed
+                        Picasso.with(mContext)
+                                .load(posterURL)
+                                .fit()
+                                .centerCrop()
+                                .into(holder.coverImageView, new Callback() {
+                                    @Override
+                                    public void onSuccess() {
+                                        mMovieList.get(position).setMovieReady(true);
+                                    }
 
-                @Override
-                public void onError() {
+                                    @Override
+                                    public void onError() {
 
-                }
-            });
+                                    }
+                                });
+                    }
+                });
     }
 
     public boolean isMovieReady(int position) {

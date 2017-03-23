@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+
+        <!-- android transitions -->
+        <item name="android:windowContentTransitions">true</item>
+        <item name="android:windowBackground">@color/window_background</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+
+    </style>
+
+    <style name="TransAppTheme" parent="AppTheme">
+        <item name="android:windowTranslucentStatus">@bool/is_portrait</item>
+        <item name="android:windowTranslucentNavigation">@bool/is_portrait</item>
+        <item name="android:windowEnterTransition">@android:transition/fade</item>
+        <item name="android:windowExitTransition">@android:transition/fade</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+    </style>
+
+    <style name="MaterialMoviesDetailConfirmation">
+        <item name="android:visibility">gone</item>
+    </style>
+
+</resources>

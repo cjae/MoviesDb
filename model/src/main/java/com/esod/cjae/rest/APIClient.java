@@ -50,61 +50,97 @@ public class APIClient implements RestDataSource {
 
     @Override
     public void getMovies() {
-        apiService.getPopularMovies(Constants.API_KEY, retrofitCallback);
+        Call<MoviesWrapper> call = apiService.getPopularMovies(Constants.API_KEY);
+        call.enqueue(new Callback<MoviesWrapper>() {
+            @Override
+            public void onResponse(Call<MoviesWrapper> call, Response<MoviesWrapper> response) {
+                bus.post(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<MoviesWrapper> call, Throwable t) {
+                System.out.printf("[DEBUG] APIClient failure - " + t.getMessage());
+            }
+        });
     }
 
     @Override
     public void getDetailMovie(String id) {
-        apiService.getMovieDetail(Constants.API_KEY, id, retrofitCallback);
+        Call<MovieDetail> call = apiService.getMovieDetail(Constants.API_KEY, id);
+        call.enqueue(new Callback<MovieDetail>() {
+            @Override
+            public void onResponse(Call<MovieDetail> call, Response<MovieDetail> response) {
+                bus.post( response.body());
+            }
+
+            @Override
+            public void onFailure(Call<MovieDetail> call, Throwable t) {
+                System.out.printf("[DEBUG] APIClient failure - " + t.getMessage());
+            }
+        });
     }
 
     @Override
     public void getReviews(String id) {
-        apiService.getReviews(Constants.API_KEY, id, retrofitCallback);
+        Call<ReviewsWrapper> call = apiService.getReviews(Constants.API_KEY, id);
+        call.enqueue(new Callback<ReviewsWrapper>() {
+            @Override
+            public void onResponse(Call<ReviewsWrapper> call, Response<ReviewsWrapper> response) {
+                bus.post(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<ReviewsWrapper> call, Throwable t) {
+                System.out.printf("[DEBUG] APIClient failure - " + t.getMessage());
+            }
+        });
     }
 
     @Override
     public void getConfiguration() {
-        apiService.getConfiguration(Constants.API_KEY, retrofitCallback);
+        Call<ConfigurationResponse> call = apiService.getConfiguration(Constants.API_KEY);
+        call.enqueue(new Callback<ConfigurationResponse>() {
+            @Override
+            public void onResponse(Call<ConfigurationResponse> call, Response<ConfigurationResponse> response) {
+                bus.post(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<ConfigurationResponse> call, Throwable t) {
+                System.out.printf("[DEBUG] APIClient failure - " + t.getMessage());
+            }
+        });
     }
 
     @Override
     public void getImages(String movieId) {
-        apiService.getImages(Constants.API_KEY, movieId, retrofitCallback);
+        Call<ImagesWrapper> call = apiService.getImages(Constants.API_KEY, movieId);
+        call.enqueue(new Callback<ImagesWrapper>() {
+            @Override
+            public void onResponse(Call<ImagesWrapper> call, Response<ImagesWrapper> response) {
+                bus.post(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<ImagesWrapper> call, Throwable t) {
+                System.out.printf("[DEBUG] APIClient failure - " + t.getMessage());
+            }
+        });
     }
 
     @Override
     public void getMoviesByPage(int page) {
-        apiService.getPopularMoviesByPage(Constants.API_KEY, page + "", retrofitCallback);
-    }
-
-    private Callback retrofitCallback = new Callback() {
-        @Override
-        public void onResponse(Call call, Response response) {
-            if (response.body() instanceof MovieDetail) {
-                MovieDetail detailResponse = (MovieDetail) response.body();
-                bus.post(detailResponse);
-
-            } else if (response.body() instanceof MoviesWrapper) {
-                MoviesWrapper moviesApiResponse = (MoviesWrapper) response.body();
-                bus.post(moviesApiResponse);
-
-            } else if (response.body() instanceof ConfigurationResponse) {
-                ConfigurationResponse configurationResponse = (ConfigurationResponse) response.body();
-                bus.post(configurationResponse);
-
-            } else if (response.body() instanceof ReviewsWrapper) {
-                ReviewsWrapper reviewsWrapper = (ReviewsWrapper) response.body();
-                bus.post(reviewsWrapper);
-            } else if (response.body() instanceof ImagesWrapper) {
-                ImagesWrapper imagesWrapper = (ImagesWrapper) response.body();
-                bus.post(imagesWrapper);
+        Call<MoviesWrapper> call = apiService.getPopularMoviesByPage(Constants.API_KEY, page + "");
+        call.enqueue(new Callback<MoviesWrapper>() {
+            @Override
+            public void onResponse(Call<MoviesWrapper> call, Response<MoviesWrapper> response) {
+                bus.post(response.body());
             }
-        }
 
-        @Override
-        public void onFailure(Call call, Throwable t) {
-            System.out.printf("[DEBUG] APIClient failure - " + t.getMessage());
-        }
-    };
+            @Override
+            public void onFailure(Call<MoviesWrapper> call, Throwable t) {
+                System.out.printf("[DEBUG] APIClient failure - " + t.getMessage());
+            }
+        });
+    }
 }

@@ -28,7 +28,7 @@ dependencies {
     compile project(':domain')
 
     // Square libraries
-    compile 'com.squareup.picasso:picasso:2.4.0'
+    compile 'com.squareup.picasso:picasso:2.5.0'
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'com.github.pedrovgs:renderers:3.0.0'
 

@@ -47,4 +47,7 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="activity_movies_message_more_films">Loading more films</string>
+    <string name="activity_movies.message.loading_film">Movie loading, please wait</string>
 </resources>
